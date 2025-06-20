@@ -9,17 +9,39 @@
   <div class="container">
 
     <!-- 연도 및 나이 섹션 -->
-    <div class="section" data-section="year-age">
+    <div class="section fixed-row">
       <h1>연도 및 나이</h1>
       <p class="description">계산을 시작할 연도와 나이 입력</p>
-      <button class="add-btn">추가</button>
-      <div class="input-wrapper"></div>
+      <div class="input-row">
+        <input type="number" placeholder="연도" min="2020" max="2100">
+        <input type="number" placeholder="나이" min="20" max="100">
+      </div>
     </div>
+
+    <div class="divider"></div>
 
     <!-- 자산 현황 섹션 -->
     <div class="section" data-section="assets">
       <h1>자산 현황</h1>
       <p class="description">현금성 자산(현금, 입출금계좌 등), 투자 자산(주식, 채권, 펀드, 금, 은 등), 부동산은 제외</p>
+      <button class="add-btn">추가</button>
+      <div class="input-wrapper"></div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="section" data-section="assets">
+      <h1>미래 자산</h1>
+      <p class="description">미래에 만기되는 예금 또는 적금</p>
+      <button class="add-btn">추가</button>
+      <div class="input-wrapper"></div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="section" data-section="assets">
+      <h1>정기 소득</h1>
+      <p class="description">국민연금, 주택연금, 월세, 기타 소득 등등(배당금 포함 기타 소득의 경우 위 투자자산 예상 수익률에 반영 필요)</p>
       <button class="add-btn">추가</button>
       <div class="input-wrapper"></div>
     </div>
