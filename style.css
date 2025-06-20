@@ -52,7 +52,6 @@ h1 {
 
 .input-row {
   display: grid;
-  flex-direction: row;
   grid-template-columns: repeat(auto-fit, minmax(0, 1fr)) 40px;
   gap: 10px;
   align-items: center;
@@ -92,9 +91,9 @@ h1 {
   border-radius: 10px;
   border: none;
   background-color: #f0f0f0;
-  width: 100%;
   box-sizing: border-box;
 }
+
 
 .input-row button.delete-btn {
   width: 40px;
