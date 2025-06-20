@@ -11,7 +11,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const inputWrapper = section.querySelector(".input-wrapper");
 
       const row = document.createElement("div");
-      row.className = "input-row";
+      row.className = "input-row-3";
 
       sectionConfigs[type].forEach(placeholder => {
         const input = document.createElement("input");
