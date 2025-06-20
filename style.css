@@ -85,3 +85,24 @@ h1 {
   border-radius: 10px;
   cursor: pointer;
 }
+
+.divider {
+  width: 480px;
+  height: 1px;
+  margin: 40px auto;
+  background-color: #e0e0e0;
+}
+
+.section.fixed-row-1 .input-row {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.section.fixed-row-2 .input-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 10px;
+}
