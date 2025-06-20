@@ -1,1 +1,34 @@
-<h1> hello world </h1>
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>미래 자산 계산기</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    
+    <div class="section">
+      <h1>연도 및 나이</h1>
+      <p class="description">계산을 시작할 연도와 나이 입력</p>
+      <div class="input-row">
+        <input type="number" placeholder="연도" min="2020" max="2100">
+        <input type="number" placeholder="나이" min="20" max="100">
+      </div>
+    </div>
+
+    <div class="section">
+      <h1>자산 현황</h1>
+      <p class="description">현금성 자산(현금, 입출금계좌 등), 투자 자산(주식, 채권, 펀드, 금, 은 등), 부동산은 제외</p>
+      <div class="input-row">
+        <input type="text" placeholder="자산종류">
+        <input type="number" placeholder="금액">
+        <input type="number" placeholder="예상 연수익률(%)">
+      </div>
+    </div>
+
+    <button class="calculate-btn">계산하기</button>
+
+  </div>
+</body>
+</html>
