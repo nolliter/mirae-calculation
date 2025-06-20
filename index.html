@@ -7,28 +7,27 @@
 </head>
 <body>
   <div class="container">
-    
-    <div class="section">
+
+    <!-- 연도 및 나이 섹션 -->
+    <div class="section" data-section="year-age">
       <h1>연도 및 나이</h1>
       <p class="description">계산을 시작할 연도와 나이 입력</p>
-      <div class="input-row">
-        <input type="number" placeholder="연도" min="2020" max="2100">
-        <input type="number" placeholder="나이" min="20" max="100">
-      </div>
+      <button class="add-btn">추가</button>
+      <div class="input-wrapper"></div>
     </div>
 
-    <div class="section">
+    <!-- 자산 현황 섹션 -->
+    <div class="section" data-section="assets">
       <h1>자산 현황</h1>
       <p class="description">현금성 자산(현금, 입출금계좌 등), 투자 자산(주식, 채권, 펀드, 금, 은 등), 부동산은 제외</p>
-      <div class="input-row">
-        <input type="text" placeholder="자산종류">
-        <input type="number" placeholder="금액">
-        <input type="number" placeholder="예상 연수익률(%)">
-      </div>
+      <button class="add-btn">추가</button>
+      <div class="input-wrapper"></div>
     </div>
 
     <button class="calculate-btn">계산하기</button>
 
   </div>
+
+  <script src="script.js"></script>
 </body>
 </html>
