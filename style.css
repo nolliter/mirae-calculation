@@ -50,9 +50,30 @@ h1 {
   gap: 12px;
 }
 
-.input-row {
+.input-row-2 {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(0, 1fr)) 40px;
+  grid-template-columns: 1fr 1fr 40px; /* input 2개, delete 버튼 */
+  gap: 10px;
+  align-items: center;
+}
+
+.input-row-3 {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 40px; /* input 3개, delete 버튼 */
+  gap: 10px;
+  align-items: center;
+}
+
+.input-row-4 {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr 40px; /* input 4개, delete 버튼 */
+  gap: 10px;
+  align-items: center;
+}
+
+.input-row-5 {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr 40px; /* input 5개, delete 버튼 */
   gap: 10px;
   align-items: center;
 }
