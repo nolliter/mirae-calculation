@@ -46,12 +46,13 @@ h1 {
 
 .input-wrapper {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   gap: 12px;
 }
 
 .input-row {
   display: grid;
+  flex-direction: row;
   grid-template-columns: repeat(auto-fit, minmax(0, 1fr)) 40px;
   gap: 10px;
   align-items: center;
