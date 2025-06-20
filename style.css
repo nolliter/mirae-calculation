@@ -6,7 +6,7 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
+  min-height: 100vh;
 }
 
 .container {
@@ -16,7 +16,8 @@ body {
 
 .section {
   width: 480px;
-  margin: 0 auto 30px auto;
+  margin: 0 auto 40px auto;
+  text-align: center;
 }
 
 h1 {
@@ -31,13 +32,32 @@ h1 {
   margin-bottom: 16px;
 }
 
-.input-row {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
+.add-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 20px;
+  border: none;
+  background-color: #000;
+  color: white;
+  font-size: 14px;
+  margin-bottom: 20px;
+  cursor: pointer;
 }
 
-input {
+.input-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.input-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(0, 1fr)) 40px;
+  gap: 10px;
+  align-items: center;
+}
+
+.input-row input {
   padding: 10px;
   font-size: 14px;
   border-radius: 10px;
@@ -45,6 +65,16 @@ input {
   background-color: #f0f0f0;
   width: 100%;
   box-sizing: border-box;
+}
+
+.input-row button.delete-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 20px;
+  background-color: #ccc;
+  border: none;
+  font-weight: bold;
+  cursor: pointer;
 }
 
 .calculate-btn {
