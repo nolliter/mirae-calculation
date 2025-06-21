@@ -2,7 +2,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const sectionConfigs = {
     "assets": ["자산종류", "금액(원)", "예상 연수익률(%)"],
     "future-assets": ["자산종류", "금액(원)", "만기연월(YYYYMM)"],
-    "income": ["수입종류", "금액(원)", "주기", "시작연월(YYYYMM)", "종료연월(YYYYMM)"]
+    "income": ["수입종류", "금액(원)", "시작연월(YYYYMM)", "종료연월(YYYYMM)"]
   };
 
   document.querySelectorAll(".add-btn").forEach(button => {
@@ -115,26 +115,6 @@ document.addEventListener("DOMContentLoaded", () => {
             }
           });
 
-        } else if (label === "주기") {
-          const wrapper = document.createElement("div");
-          wrapper.className = "select-wrapper";
-          inputElement = document.createElement("select");
-          inputElement.className = "custom-select";
-          const placeholderOption = document.createElement("option");
-          placeholderOption.value = "";
-          placeholderOption.textContent = "주기";
-          placeholderOption.disabled = true;
-          placeholderOption.selected = true;
-          inputElement.appendChild(placeholderOption);
-          ["매월", "매년"].forEach(optionText => {
-            const option = document.createElement("option");
-            option.value = optionText;
-            option.textContent = optionText;
-            inputElement.appendChild(option);
-          });
-          wrapper.appendChild(inputElement);
-          row.appendChild(wrapper);
-          return;
         } else {
           inputElement = document.createElement("input");
           inputElement.type = "text";
