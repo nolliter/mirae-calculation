@@ -42,12 +42,13 @@ function calculate() {
   const incomes = document.querySelectorAll(".section[data-section='income'] .input-row");
   const incomeList = [];
   incomes.forEach(row => {
-    const [_, amountInput, startInput, endInput] = row.querySelectorAll("input, select");
+    const [_, amountInput, startInput, endInput] = row.querySelectorAll("input");
     const amount = parseRaw(amountInput);
+    const cycle = cycleSelect.value;
     const start = startInput.dataset.raw;
     const end = endInput.dataset.raw;
     if (start && end) {
-      incomeList.push({ amount, cycle, start, end });
+      incomeList.push({ amount, start, end });
     }
   });
 
@@ -90,16 +91,16 @@ function calculate() {
     const maturity = futureMap.get(year) || 0;
 
     // 잔액 계산
-    const annualExpense = currentExpense * 12;
+    const annualExpense = Math.floor(currentExpense * 12);
     balance = balance + totalIncome + assetProfit + maturity - annualExpense;
 
     result.push({
       year,
       age,
       avgMonthlyIncome: Math.floor(totalIncome / 12),
-      annualIncome: totalIncome,
-      monthlyExpense: Math.round(currentExpense),
-      annualExpense,
+      annualIncome: Math.floor(totalIncome),
+      monthlyExpense: Math.floor(currentExpense),
+      annualExpense: Math.floor(annualExpense),
       yearEndBalance: Math.floor(balance),
     });
 
