@@ -36,7 +36,6 @@ document.addEventListener("DOMContentLoaded", () => {
             const raw = e.target.value.replace(/[^0-9]/g, "");
             if (raw) {
               e.target.dataset.raw = raw;
-              e.target.value = Number(raw).toLocaleString() + "원";
             } else {
               e.target.value = "";
               delete e.target.dataset.raw;
