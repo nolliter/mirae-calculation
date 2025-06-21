@@ -1,199 +1,151 @@
-document.addEventListener("DOMContentLoaded", () => {
-  const sectionConfigs = {
-    "assets": ["자산종류", "금액(원)", "예상 연수익률(%)"],
-    "future-assets": ["자산종류", "금액(원)", "만기연월(YYYYMM)"],
-    "income": ["수입종류", "금액(원)", "주기", "시작연월(YYYYMM)", "종료연월(YYYYMM)"]
-  };
+// 계산 트리거
+const calculateBtn = document.querySelector(".calculate-btn");
+calculateBtn.addEventListener("click", calculate);
 
-  document.querySelectorAll(".add-btn").forEach(button => {
-    button.addEventListener("click", () => {
-      const section = button.closest(".section");
-      const type = section.dataset.section;
-      const inputWrapper = section.querySelector(".input-wrapper");
-      const config = sectionConfigs[type];
-      const row = document.createElement("div");
-      row.className = "input-row";
-      row.style.display = "grid";
-      row.style.gridTemplateColumns = `repeat(${config.length}, 1fr) 40px`;
-      row.style.gap = "10px";
-      row.style.alignItems = "center";
-      row.style.width = "100%";
-      row.style.boxSizing = "border-box";
+function parseRaw(input) {
+  const raw = input.dataset.raw;
+  return raw ? Number(raw) : 0;
+}
 
-      config.forEach(label => {
-        let inputElement;
+function calculate() {
+  const startYear = parseInt(document.querySelector("input[placeholder='연도']").value);
+  const startAge = parseInt(document.querySelector("input[placeholder='나이']").value);
+  const inflationInput = document.querySelector("input[placeholder='소비자물가상승률(%)']");
+  const baseExpense = parseRaw(document.querySelector("input[placeholder='월 생활비(원)']"));
+  const inflationRate = parseFloat(inflationInput.dataset.raw || 3) / 100;
 
-        if (label === "금액(원)") {
-          inputElement = document.createElement("input");
-          inputElement.type = "text";
-          inputElement.inputMode = "numeric";
-          inputElement.placeholder = label;
-          inputElement.classList.add("amount-input");
-
-          inputElement.addEventListener("input", e => {
-            const raw = e.target.value.replace(/[^0-9]/g, "");
-            if (raw) {
-              e.target.dataset.raw = raw;
-              e.target.value = Number(raw).toLocaleString();
-            } else {
-              e.target.value = "";
-              delete e.target.dataset.raw;
-            }
-          });
-
-          inputElement.addEventListener("blur", e => {
-            const raw = e.target.dataset.raw;
-            if (raw) e.target.value = Number(raw).toLocaleString() + "원";
-          });
-
-          inputElement.addEventListener("focus", e => {
-            const raw = e.target.dataset.raw;
-            if (raw) e.target.value = Number(raw).toLocaleString();
-          });
-
-        } else if (label === "예상 연수익률(%)" || label === "소비자물가상승률(%)") {
-          inputElement = document.createElement("input");
-          inputElement.type = "text";
-          inputElement.inputMode = "numeric";
-          inputElement.placeholder = label;
-          inputElement.classList.add("rate-input");
-
-          inputElement.addEventListener("input", e => {
-            const raw = e.target.value.replace(/[^0-9\-]/g, "");
-            e.target.dataset.raw = raw;
-            e.target.value = raw;
-          });
-
-          inputElement.addEventListener("blur", e => {
-            const raw = e.target.dataset.raw;
-            if (raw !== undefined) {
-              e.target.value = raw + "%";
-            }
-          });
-
-          inputElement.addEventListener("focus", e => {
-            const raw = e.target.dataset.raw;
-            if (raw !== undefined) {
-              e.target.value = raw;
-            }
-          });
-
-        } else if (label.includes("연월")) {
-          inputElement = document.createElement("input");
-          inputElement.type = "text";
-          inputElement.inputMode = "numeric";
-          inputElement.maxLength = 7;
-          inputElement.placeholder = label;
-
-          inputElement.addEventListener("input", e => {
-            const raw = e.target.value.replace(/[^0-9]/g, "").slice(0, 6);
-            if (raw.length === 6) {
-              const month = Number(raw.slice(4, 6));
-              if (month >= 1 && month <= 12) {
-                e.target.dataset.raw = raw;
-                e.target.value = raw.slice(0, 4) + "-" + raw.slice(4, 6);
-              } else {
-                alert("월은 01에서 12 사이여야 합니다.");
-                e.target.value = "";
-                delete e.target.dataset.raw;
-              }
-            } else {
-              e.target.value = raw;
-              delete e.target.dataset.raw;
-            }
-          });
-
-          inputElement.addEventListener("focus", e => {
-            const raw = e.target.dataset.raw;
-            if (raw) e.target.value = raw;
-          });
-
-          inputElement.addEventListener("blur", e => {
-            const raw = e.target.dataset.raw;
-            if (raw && raw.length === 6) {
-              e.target.value = raw.slice(0, 4) + "-" + raw.slice(4, 6);
-            }
-          });
-
-        } else if (label === "주기") {
-          const wrapper = document.createElement("div");
-          wrapper.className = "select-wrapper";
-          inputElement = document.createElement("select");
-          inputElement.className = "custom-select";
-          const placeholderOption = document.createElement("option");
-          placeholderOption.value = "";
-          placeholderOption.textContent = "주기";
-          placeholderOption.disabled = true;
-          placeholderOption.selected = true;
-          inputElement.appendChild(placeholderOption);
-          ["매월", "매년"].forEach(optionText => {
-            const option = document.createElement("option");
-            option.value = optionText;
-            option.textContent = optionText;
-            inputElement.appendChild(option);
-          });
-          wrapper.appendChild(inputElement);
-          row.appendChild(wrapper);
-          return;
-        } else {
-          inputElement = document.createElement("input");
-          inputElement.type = "text";
-          inputElement.placeholder = label;
-        }
-
-        row.appendChild(inputElement);
-      });
-
-      const deleteBtn = document.createElement("button");
-      deleteBtn.textContent = "X";
-      deleteBtn.className = "delete-btn";
-      deleteBtn.onclick = () => row.remove();
-      row.appendChild(deleteBtn);
-
-      inputWrapper.appendChild(row);
-    });
+  // 현재 자산 수집 및 연 수익 계산 (복리)
+  const assets = document.querySelectorAll(".section[data-section='assets'] .input-row");
+  let initialAssets = 0;
+  const assetList = [];
+  assets.forEach(row => {
+    const [_, amountInput, rateInput] = row.querySelectorAll("input");
+    const amount = parseRaw(amountInput);
+    const rate = parseFloat(rateInput.dataset.raw || 0) / 100;
+    assetList.push({ principal: amount, rate });
+    initialAssets += amount;
   });
 
-  // 월 생활비 원 붙이기
-  document.querySelectorAll(".amount-input").forEach(input => {
-    input.addEventListener("input", e => {
-      const raw = e.target.value.replace(/[^0-9]/g, "");
-      if (raw) {
-        e.target.dataset.raw = raw;
-        e.target.value = Number(raw).toLocaleString();
-      } else {
-        e.target.value = "";
-        delete e.target.dataset.raw;
-      }
-    });
-    input.addEventListener("blur", e => {
-      const raw = e.target.dataset.raw;
-      if (raw) e.target.value = Number(raw).toLocaleString() + "원";
-    });
-    input.addEventListener("focus", e => {
-      const raw = e.target.dataset.raw;
-      if (raw) e.target.value = Number(raw).toLocaleString();
-    });
+  // 미래 자산 수집
+  const futureAssets = document.querySelectorAll(".section[data-section='future-assets'] .input-row");
+  const futureMap = new Map();
+  futureAssets.forEach(row => {
+    const [_, amountInput, dateInput] = row.querySelectorAll("input");
+    const year = dateInput.dataset.raw?.slice(0, 4);
+    const amount = parseRaw(amountInput);
+    if (year) {
+      futureMap.set(Number(year), (futureMap.get(Number(year)) || 0) + amount);
+    }
   });
 
-  // 소비자물가상승률(%) 처리
-  document.querySelectorAll(".rate-input").forEach(input => {
-    input.addEventListener("input", e => {
-      const raw = e.target.value.replace(/[^0-9\-]/g, "");
-      e.target.dataset.raw = raw;
-      e.target.value = raw;
-    });
-    input.addEventListener("blur", e => {
-      const raw = e.target.dataset.raw;
-      if (raw !== undefined) {
-        e.target.value = raw + "%";
-      }
-    });
-    input.addEventListener("focus", e => {
-      const raw = e.target.dataset.raw;
-      if (raw !== undefined) {
-        e.target.value = raw;
-      }
-    });
+  // 정기 수입 수집
+  const incomes = document.querySelectorAll(".section[data-section='income'] .input-row");
+  const incomeList = [];
+  incomes.forEach(row => {
+    const [_, amountInput, cycleSelect, startInput, endInput] = row.querySelectorAll("input, select");
+    const amount = parseRaw(amountInput);
+    const cycle = cycleSelect.value;
+    const start = startInput.dataset.raw;
+    const end = endInput.dataset.raw;
+    if (start && end) {
+      incomeList.push({ amount, cycle, start, end });
+    }
   });
-});
+
+  // 계산 시작
+  const result = [];
+  let year = startYear;
+  let age = startAge;
+  let balance = initialAssets;
+  let currentExpense = baseExpense;
+
+  while (age <= 100) {
+    // 수입 계산
+    let totalIncome = 0;
+    incomeList.forEach(({ amount, start, end }) => {
+      const startYear = parseInt(start.slice(0, 4));
+      const startMonth = parseInt(start.slice(4, 6));
+      const endYear = parseInt(end.slice(0, 4));
+      const endMonth = parseInt(end.slice(4, 6));
+      let months = 0;
+      if (year > startYear && year < endYear) {
+        months = 12;
+      } else if (year === startYear && year === endYear) {
+        months = endMonth - startMonth + 1;
+      } else if (year === startYear) {
+        months = 12 - startMonth + 1;
+      } else if (year === endYear) {
+        months = endMonth;
+      }
+      totalIncome += months * amount;
+    });
+
+    // 자산 복리 계산
+    let assetProfit = 0;
+    assetList.forEach(asset => {
+      asset.principal *= (1 + asset.rate);
+      assetProfit += asset.principal - (asset.principal / (1 + asset.rate));
+    });
+
+    // 미래 자산 반영
+    const maturity = futureMap.get(year) || 0;
+
+    // 잔액 계산
+    const annualExpense = currentExpense * 12;
+    balance = balance + totalIncome + assetProfit + maturity - annualExpense;
+
+    result.push({
+      year,
+      age,
+      avgMonthlyIncome: Math.floor(totalIncome / 12),
+      annualIncome: totalIncome,
+      monthlyExpense: Math.round(currentExpense),
+      annualExpense,
+      yearEndBalance: Math.floor(balance),
+    });
+
+    if (balance < 0) break;
+    year++;
+    age++;
+    currentExpense *= (1 + inflationRate);
+  }
+
+  renderResult(result);
+}
+
+function renderResult(rows) {
+  const container = document.createElement("div");
+  container.className = "result-table";
+  container.innerHTML = `
+    <table>
+      <thead>
+        <tr>
+          <th>연도</th>
+          <th>나이</th>
+          <th title="당해 총 수입/12">월 평균 수입</th>
+          <th>연 수입</th>
+          <th title="물가 상승 고려">월 지출</th>
+          <th>연 지출</th>
+          <th>당해 말 잔액</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${rows.map(r => `
+          <tr>
+            <td>${r.year}</td>
+            <td>${r.age}</td>
+            <td>${r.avgMonthlyIncome.toLocaleString()}원</td>
+            <td>${r.annualIncome.toLocaleString()}원</td>
+            <td>${r.monthlyExpense.toLocaleString()}원</td>
+            <td>${r.annualExpense.toLocaleString()}원</td>
+            <td>${r.yearEndBalance.toLocaleString()}원</td>
+          </tr>`).join("")}
+      </tbody>
+    </table>
+  `;
+
+  // 기존 테이블 제거 후 추가
+  const prev = document.querySelector(".result-table");
+  if (prev) prev.remove();
+  document.querySelector(".container").appendChild(container);
+}
