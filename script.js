@@ -14,7 +14,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const row = document.createElement("div");
       row.className = "input-row";
 
-      // grid 설정
+      // Grid 설정
       row.style.display = "grid";
       row.style.gridTemplateColumns = `repeat(${config.length}, 1fr) 40px`;
       row.style.gap = "10px";
@@ -29,8 +29,8 @@ document.addEventListener("DOMContentLoaded", () => {
         if (label === "금액(원)") {
           inputElement = document.createElement("input");
           inputElement.type = "text";
-          inputElement.placeholder = label;
           inputElement.inputMode = "numeric";
+          inputElement.placeholder = label;
 
           inputElement.addEventListener("input", e => {
             const raw = e.target.value.replace(/[^0-9]/g, "");
@@ -53,17 +53,57 @@ document.addEventListener("DOMContentLoaded", () => {
             if (raw) e.target.value = Number(raw).toLocaleString() + "원";
           });
 
-        // 연수익률(%)
+        // 연수익률(%) - type=text + inputMode=numeric
         } else if (label === "예상 연수익률(%)") {
           inputElement = document.createElement("input");
-          inputElement.type = "number";
+          inputElement.type = "text";
+          inputElement.inputMode = "numeric";
           inputElement.placeholder = label;
-          inputElement.min = -100;
-          inputElement.max = 200;
 
           inputElement.addEventListener("input", e => {
             const raw = e.target.value.replace(/[^0-9\-]/g, "");
             e.target.dataset.raw = raw;
+            e.target.value = raw;
+          });
+
+          inputElement.addEventListener("blur", e => {
+            const raw = e.target.dataset.raw;
+            if (raw !== undefined) {
+              e.target.value = raw + "%";
+            }
+          });
+
+          inputElement.addEventListener("focus", e => {
+            const raw = e.target.dataset.raw;
+            if (raw !== undefined) {
+              e.target.value = raw;
+            }
+          });
+
+        // 연월(YYYYMM)
+        } else if (label.includes("연월")) {
+          inputElement = document.createElement("input");
+          inputElement.type = "text";
+          inputElement.inputMode = "numeric";
+          inputElement.maxLength = 7;
+          inputElement.placeholder = label;
+
+          inputElement.addEventListener("input", e => {
+            const raw = e.target.value.replace(/[^0-9]/g, "").slice(0, 6);
+            if (raw.length === 6) {
+              const month = Number(raw.slice(4, 6));
+              if (month >= 1 && month <= 12) {
+                e.target.dataset.raw = raw;
+                e.target.value = raw.slice(0, 4) + "-" + raw.slice(4, 6);
+              } else {
+                alert("월은 01에서 12 사이여야 합니다.");
+                e.target.value = "";
+                delete e.target.dataset.raw;
+              }
+            } else {
+              e.target.value = raw;
+              delete e.target.dataset.raw;
+            }
           });
 
           inputElement.addEventListener("focus", e => {
@@ -73,31 +113,23 @@ document.addEventListener("DOMContentLoaded", () => {
 
           inputElement.addEventListener("blur", e => {
             const raw = e.target.dataset.raw;
-            if (raw) e.target.value = raw + "%";
-          });
-
-        // 연월(YYYYMM) - use month picker
-        } else if (label.includes("연월")) {
-          inputElement = document.createElement("input");
-          inputElement.type = "month";
-          inputElement.placeholder = label;
-
-          inputElement.addEventListener("change", e => {
-            const value = e.target.value; // "2024-06"
-            const [year, month] = value.split("-");
-            if (!year || !month || Number(month) < 1 || Number(month) > 12) {
-              alert("유효한 월(01~12)을 선택하세요.");
-              e.target.value = "";
-              delete e.target.dataset.raw;
-            } else {
-              e.target.dataset.raw = year + month;
+            if (raw && raw.length === 6) {
+              e.target.value = raw.slice(0, 4) + "-" + raw.slice(4, 6);
             }
           });
-        }
 
-        // 주기 (월/연)
-        else if (label === "주기") {
+        // 주기 (select)
+        } else if (label === "주기") {
           inputElement = document.createElement("select");
+          inputElement.placeholder = label;
+
+          const placeholderOption = document.createElement("option");
+          placeholderOption.value = "";
+          placeholderOption.textContent = "주기";
+          placeholderOption.disabled = true;
+          placeholderOption.selected = true;
+          inputElement.appendChild(placeholderOption);
+
           ["월", "연"].forEach(optionText => {
             const option = document.createElement("option");
             option.value = optionText;
@@ -105,7 +137,7 @@ document.addEventListener("DOMContentLoaded", () => {
             inputElement.appendChild(option);
           });
 
-        // 기본 text input
+        // 기본 입력
         } else {
           inputElement = document.createElement("input");
           inputElement.type = "text";
