@@ -44,7 +44,6 @@ function calculate() {
   incomes.forEach(row => {
     const [_, amountInput, startInput, endInput] = row.querySelectorAll("input");
     const amount = parseRaw(amountInput);
-    const cycle = cycleSelect.value;
     const start = startInput.dataset.raw;
     const end = endInput.dataset.raw;
     if (start && end) {
