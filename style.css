@@ -113,22 +113,38 @@ h1 {
   margin-top: 10px;
 }
 
-select {
+/* select input을 다른 input들과 동일한 스타일로 */
+.custom-select {
   font-size: 14px;
   font-family: inherit;
-  padding: 10px 12px;
+  padding: 10px 36px 10px 12px; /* 오른쪽에 여백 확보 (▼ 위치) */
   border-radius: 10px;
   border: none;
   background-color: #f0f0f0;
   color: #333;
-  appearance: none; /* 기본 화살표 제거 */
+  appearance: none;
   -webkit-appearance: none;
   -moz-appearance: none;
   box-sizing: border-box;
+  position: relative;
+  width: 100%;
 }
 
-/* 드롭다운 화살표 대체 (선택 사항) */
-select::-ms-expand {
-  display: none;
+/* select를 감싸는 wrapper로 ▼ 표시 추가 */
+.select-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+/* ▼ 아이콘 */
+.select-wrapper::after {
+  content: "▼";
+  position: absolute;
+  top: 50%;
+  right: 12px;
+  transform: translateY(-50%);
+  pointer-events: none;
+  font-size: 12px;
+  color: #666;
 }
 
