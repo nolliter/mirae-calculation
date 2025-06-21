@@ -30,6 +30,7 @@
 
     <div class="divider"></div>
 
+    <!-- 미래 자산 섹션 -->
     <div class="section" data-section="future-assets">
       <h1>미래 자산</h1>
       <p class="description">미래에 만기되는 예금 또는 적금</p>
@@ -39,6 +40,7 @@
 
     <div class="divider"></div>
 
+    <!-- 정기 소득 섹션 -->
     <div class="section" data-section="income">
       <h1>정기 소득</h1>
       <p class="description">국민연금, 주택연금, 월세, 기타 소득 등등(배당금 포함 기타 소득의 경우 위 투자자산 예상 수익률에 반영 필요)</p>
@@ -48,26 +50,27 @@
 
     <div class="divider"></div>
 
+    <!-- 희망 월 생활비 -->
     <div class="section fixed-row-1">
       <h1>희망 월 생활비</h1>
       <p class="description">미래 희망하는 한달 생활비를 현재기준으로 입력</p>
       <div class="input-row">
-        <input type="number" placeholder="월 생활비(원)">
+        <input type="text" placeholder="월 생활비(원)" class="amount-input">
       </div>
     </div>
 
     <div class="divider"></div>
 
+    <!-- 인플레이션 -->
     <div class="section fixed-row-1">
       <h1>인플레이션</h1>
       <p class="description">인플레이션(한국기준 소비자 물가상승률)</p>
       <div class="input-row">
-        <input type="number" placeholder="소비자물가상승률(%)" value=3>
+        <input type="text" placeholder="소비자물가상승률(%)" class="rate-input" value="3%">
       </div>
     </div>
 
     <button class="calculate-btn">계산하기</button>
-
   </div>
 
   <script src="script.js"></script>

@@ -13,8 +13,6 @@ document.addEventListener("DOMContentLoaded", () => {
       const config = sectionConfigs[type];
       const row = document.createElement("div");
       row.className = "input-row";
-
-      // Grid 설정
       row.style.display = "grid";
       row.style.gridTemplateColumns = `repeat(${config.length}, 1fr) 40px`;
       row.style.gap = "10px";
@@ -25,26 +23,22 @@ document.addEventListener("DOMContentLoaded", () => {
       config.forEach(label => {
         let inputElement;
 
-        // 금액(원)
         if (label === "금액(원)") {
           inputElement = document.createElement("input");
           inputElement.type = "text";
           inputElement.inputMode = "numeric";
           inputElement.placeholder = label;
+          inputElement.classList.add("amount-input");
 
           inputElement.addEventListener("input", e => {
             const raw = e.target.value.replace(/[^0-9]/g, "");
             if (raw) {
               e.target.dataset.raw = raw;
+              e.target.value = Number(raw).toLocaleString();
             } else {
               e.target.value = "";
               delete e.target.dataset.raw;
             }
-          });
-
-          inputElement.addEventListener("focus", e => {
-            const raw = e.target.dataset.raw;
-            if (raw) e.target.value = Number(raw).toLocaleString();
           });
 
           inputElement.addEventListener("blur", e => {
@@ -52,12 +46,17 @@ document.addEventListener("DOMContentLoaded", () => {
             if (raw) e.target.value = Number(raw).toLocaleString() + "원";
           });
 
-        // 연수익률(%) - type=text + inputMode=numeric
-        } else if (label === "예상 연수익률(%)") {
+          inputElement.addEventListener("focus", e => {
+            const raw = e.target.dataset.raw;
+            if (raw) e.target.value = Number(raw).toLocaleString();
+          });
+
+        } else if (label === "예상 연수익률(%)" || label === "소비자물가상승률(%)") {
           inputElement = document.createElement("input");
           inputElement.type = "text";
           inputElement.inputMode = "numeric";
           inputElement.placeholder = label;
+          inputElement.classList.add("rate-input");
 
           inputElement.addEventListener("input", e => {
             const raw = e.target.value.replace(/[^0-9\-]/g, "");
@@ -79,7 +78,6 @@ document.addEventListener("DOMContentLoaded", () => {
             }
           });
 
-        // 연월(YYYYMM)
         } else if (label.includes("연월")) {
           inputElement = document.createElement("input");
           inputElement.type = "text";
@@ -117,25 +115,26 @@ document.addEventListener("DOMContentLoaded", () => {
             }
           });
 
-        // 주기 (select)
         } else if (label === "주기") {
+          const wrapper = document.createElement("div");
+          wrapper.className = "select-wrapper";
           inputElement = document.createElement("select");
           inputElement.className = "custom-select";
-        
           const placeholderOption = document.createElement("option");
           placeholderOption.value = "";
           placeholderOption.textContent = "주기";
           placeholderOption.disabled = true;
           placeholderOption.selected = true;
           inputElement.appendChild(placeholderOption);
-        
           ["매월", "매년"].forEach(optionText => {
             const option = document.createElement("option");
             option.value = optionText;
             option.textContent = optionText;
             inputElement.appendChild(option);
           });
-        // 기본 입력
+          wrapper.appendChild(inputElement);
+          row.appendChild(wrapper);
+          return;
         } else {
           inputElement = document.createElement("input");
           inputElement.type = "text";
@@ -145,7 +144,6 @@ document.addEventListener("DOMContentLoaded", () => {
         row.appendChild(inputElement);
       });
 
-      // 삭제 버튼
       const deleteBtn = document.createElement("button");
       deleteBtn.textContent = "X";
       deleteBtn.className = "delete-btn";
@@ -153,6 +151,49 @@ document.addEventListener("DOMContentLoaded", () => {
       row.appendChild(deleteBtn);
 
       inputWrapper.appendChild(row);
+    });
+  });
+
+  // 월 생활비 원 붙이기
+  document.querySelectorAll(".amount-input").forEach(input => {
+    input.addEventListener("input", e => {
+      const raw = e.target.value.replace(/[^0-9]/g, "");
+      if (raw) {
+        e.target.dataset.raw = raw;
+        e.target.value = Number(raw).toLocaleString();
+      } else {
+        e.target.value = "";
+        delete e.target.dataset.raw;
+      }
+    });
+    input.addEventListener("blur", e => {
+      const raw = e.target.dataset.raw;
+      if (raw) e.target.value = Number(raw).toLocaleString() + "원";
+    });
+    input.addEventListener("focus", e => {
+      const raw = e.target.dataset.raw;
+      if (raw) e.target.value = Number(raw).toLocaleString();
+    });
+  });
+
+  // 소비자물가상승률(%) 처리
+  document.querySelectorAll(".rate-input").forEach(input => {
+    input.addEventListener("input", e => {
+      const raw = e.target.value.replace(/[^0-9\-]/g, "");
+      e.target.dataset.raw = raw;
+      e.target.value = raw;
+    });
+    input.addEventListener("blur", e => {
+      const raw = e.target.dataset.raw;
+      if (raw !== undefined) {
+        e.target.value = raw + "%";
+      }
+    });
+    input.addEventListener("focus", e => {
+      const raw = e.target.dataset.raw;
+      if (raw !== undefined) {
+        e.target.value = raw;
+      }
     });
   });
 });
