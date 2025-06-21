@@ -42,9 +42,8 @@ function calculate() {
   const incomes = document.querySelectorAll(".section[data-section='income'] .input-row");
   const incomeList = [];
   incomes.forEach(row => {
-    const [_, amountInput, cycleSelect, startInput, endInput] = row.querySelectorAll("input, select");
+    const [_, amountInput, startInput, endInput] = row.querySelectorAll("input, select");
     const amount = parseRaw(amountInput);
-    const cycle = cycleSelect.value;
     const start = startInput.dataset.raw;
     const end = endInput.dataset.raw;
     if (start && end) {
