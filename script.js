@@ -118,23 +118,24 @@ document.addEventListener("DOMContentLoaded", () => {
           });
 
         // 주기 (select)
-        } else if (label === "주기") {
-          inputElement = document.createElement("select");
-          inputElement.placeholder = label;
-
-          const placeholderOption = document.createElement("option");
-          placeholderOption.value = "";
-          placeholderOption.textContent = "주기";
-          placeholderOption.disabled = true;
-          placeholderOption.selected = true;
-          inputElement.appendChild(placeholderOption);
-
-          ["월", "연"].forEach(optionText => {
-            const option = document.createElement("option");
-            option.value = optionText;
-            option.textContent = optionText;
-            inputElement.appendChild(option);
-          });
+        } } else if (label === "주기") {
+            inputElement = document.createElement("select");
+            inputElement.className = "custom-select";
+          
+            const placeholderOption = document.createElement("option");
+            placeholderOption.value = "";
+            placeholderOption.textContent = "주기";
+            placeholderOption.disabled = true;
+            placeholderOption.selected = true;
+            inputElement.appendChild(placeholderOption);
+          
+            ["매월", "매년"].forEach(optionText => {
+              const option = document.createElement("option");
+              option.value = optionText;
+              option.textContent = optionText;
+              inputElement.appendChild(option);
+            });
+          }
 
         // 기본 입력
         } else {
