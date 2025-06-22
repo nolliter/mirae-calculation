@@ -130,7 +130,7 @@ resultContainer.appendChild(saveBtn);
       balance = Math.floor(base * (1 + totalRate));
     }
 
-    if (balance < 0) break;
+    if (balance <= 0) break;
 
     const row = document.createElement("tr");
     row.innerHTML = `
