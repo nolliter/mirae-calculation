@@ -77,15 +77,11 @@ saveBtn.style.marginLeft = "auto";
 saveBtn.style.marginRight = "auto";
 saveBtn.onclick = () => {
   const captureArea = document.querySelector(".container");
-  html2canvas(captureArea, {
-    backgroundColor: null,
-    scrollX: 0,
-    scrollY: -window.scrollY
-  }).then(canvas => {
-    const link = document.createElement("a");
-    link.download = "result.png";
-    link.href = canvas.toDataURL();
-    link.click();
+  html2canvas(captureArea).then(canvas => {
+  const link = document.createElement("a");
+  link.download = "result.png";
+  link.href = canvas.toDataURL();
+  link.click();
   });
 };
 resultContainer.appendChild(saveBtn);
