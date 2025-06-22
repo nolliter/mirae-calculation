@@ -86,9 +86,9 @@ saveBtn.onclick = () => {
     scrollX: 0,
     scrollY: -window.scrollY,
     windowWidth: captureArea.scrollWidth,   // 캡처 영역의 실제 너비
-    windowHeight: captureArea.scrollHeight  // 캡처 영역의 실제 높이
+    windowHeight: captureArea.scrollHeight,  // 캡처 영역의 실제 높이
     backgroundColor: window.getComputedStyle(captureArea).backgroundColor, // 현재 배경색 유지
-    scale: 2, // 해상도 2배로 렌더링
+    scale: 2 // 해상도 2배로 렌더링
   }).then(canvas => {
   const link = document.createElement("a");
   link.download = "result.png";
