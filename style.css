@@ -13,9 +13,11 @@ body {
   padding: 20px;
 }
 .section {
-  width: 600px;
+  width: 100%;
+  max-width: 600px; /* 데스크탑 기준 최대 폭 */
   margin: 0 auto 40px auto;
   text-align: center;
+  padding: 0 16px; /* 좌우 여백 확보 */
 }
 h1 {
   font-size: 28px;
