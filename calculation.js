@@ -70,7 +70,11 @@ document.querySelector(".calculate-btn").addEventListener("click", () => {
       <tbody></tbody>
     </table>
   `;
-  document.body.appendChild(table);
+
+  const container = document.getElementById("result-container");
+  container.innerHTML = "";
+  container.appendChild(table);
+  
   const tbody = table.querySelector("tbody");
 
   let balance = 0;
