@@ -139,7 +139,7 @@ resultContainer.appendChild(saveBtn);
       const totalRate = assets.length > 0
         ? assets.reduce((sum, a) => sum + a.amount * (a.rate / 100), 0) / totalInitial
         : 0;
-      balance = Math.floor(base * (1 + totalRate));
+      balance = Math.floor(balance * (1 + totalRate));
     }
 
     if (balance <= 0) {
