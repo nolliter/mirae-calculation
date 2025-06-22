@@ -66,6 +66,25 @@ document.querySelector(".calculate-btn").addEventListener("click", () => {
     </table>
   `;
   resultContainer.appendChild(table);
+
+// 저장하기 버튼 생성
+const saveBtn = document.createElement("button");
+saveBtn.textContent = "저장하기";
+saveBtn.className = "save-btn";
+saveBtn.style.marginTop = "24px";
+saveBtn.style.display = "block";
+saveBtn.style.marginLeft = "auto";
+saveBtn.style.marginRight = "auto";
+saveBtn.onclick = () => {
+  html2canvas(document.body).then(canvas => {
+    const link = document.createElement("a");
+    link.download = "result.png";
+    link.href = canvas.toDataURL();
+    link.click();
+  });
+};
+resultContainer.appendChild(saveBtn);
+
   const tbody = table.querySelector("tbody");
 
   let year = startYear;
