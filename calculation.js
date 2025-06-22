@@ -1,121 +1,60 @@
-// 계산 트리거
-const calculateBtn = document.querySelector(".calculate-btn");
-calculateBtn.addEventListener("click", calculate);
+document.querySelector(".calculate-btn").addEventListener("click", () => {
+  const resultContainer = document.querySelector(".result-table");
+  if (resultContainer) resultContainer.remove();
 
-function parseRaw(input) {
-  const raw = input.dataset.raw;
-  return raw ? Number(raw) : 0;
-}
-
-function calculate() {
   const startYear = parseInt(document.querySelector("input[placeholder='연도']").value);
   const startAge = parseInt(document.querySelector("input[placeholder='나이']").value);
-  const inflationInput = document.querySelector("input[placeholder='소비자물가상승률(%)']");
-  const baseExpense = parseRaw(document.querySelector("input[placeholder='월 생활비(원)']"));
-  const inflationRate = parseFloat(inflationInput.dataset.raw || 3) / 100;
 
-  // 현재 자산 수집 및 연 수익 계산 (복리)
-  const assets = document.querySelectorAll(".section[data-section='assets'] .input-row");
-  let initialAssets = 0;
-  const assetList = [];
-  assets.forEach(row => {
-    const [_, amountInput, rateInput] = row.querySelectorAll("input");
-    const amount = parseRaw(amountInput);
-    const rate = parseFloat(rateInput.dataset.raw || 0) / 100;
-    assetList.push({ principal: amount, rate });
-    initialAssets += amount;
+  // 현재 자산 수집
+  const assetInputs = document.querySelectorAll(".section[data-section='assets'] .input-row");
+  const assets = [];
+  assetInputs.forEach(row => {
+    const inputs = row.querySelectorAll("input");
+    if (inputs.length < 3) return;
+    const amount = parseRaw(inputs[1]);
+    const rate = parseFloat(inputs[2].dataset.raw || "0");
+    assets.push({ amount, rate });
   });
 
   // 미래 자산 수집
-  const futureAssets = document.querySelectorAll(".section[data-section='future-assets'] .input-row");
-  const futureMap = new Map();
-  futureAssets.forEach(row => {
-    const [_, amountInput, dateInput] = row.querySelectorAll("input");
-    const year = dateInput.dataset.raw?.slice(0, 4);
-    const amount = parseRaw(amountInput);
-    if (year) {
-      futureMap.set(Number(year), (futureMap.get(Number(year)) || 0) + amount);
+  const futureInputs = document.querySelectorAll(".section[data-section='future-assets'] .input-row");
+  const futureAssets = [];
+  futureInputs.forEach(row => {
+    const inputs = row.querySelectorAll("input");
+    if (inputs.length < 3) return;
+    const amount = parseRaw(inputs[1]);
+    const yyyymm = inputs[2].dataset.raw;
+    if (yyyymm) {
+      const year = parseInt(yyyymm.slice(0, 4));
+      futureAssets.push({ amount, year });
     }
   });
 
   // 정기 수입 수집
-  const incomes = document.querySelectorAll(".section[data-section='income'] .input-row");
+  const incomeInputs = document.querySelectorAll(".section[data-section='income'] .input-row");
   const incomeList = [];
-  incomes.forEach(row => {
-    const [_, amountInput, startInput, endInput] = row.querySelectorAll("input");
-    const amount = parseRaw(amountInput);
-    const start = startInput.dataset.raw;
-    const end = endInput.dataset.raw;
+  incomeInputs.forEach(row => {
+    const inputs = row.querySelectorAll("input");
+    if (inputs.length < 4) return;
+    const amount = parseRaw(inputs[1]);
+    const start = inputs[2].dataset.raw;
+    const end = inputs[3].dataset.raw;
     if (start && end) {
       incomeList.push({ amount, start, end });
     }
   });
 
-  // 계산 시작
-  const result = [];
-  let year = startYear;
-  let age = startAge;
-  let balance = initialAssets;
-  let currentExpense = baseExpense;
+  // 희망 월 생활비
+  const livingCostInput = document.querySelector("input[placeholder='월 생활비(원)']");
+  const initialLivingCost = parseRaw(livingCostInput);
 
-  while (age <= 100) {
-    // 수입 계산
-    let totalIncome = 0;
-    incomeList.forEach(({ amount, start, end }) => {
-      const startYear = parseInt(start.slice(0, 4));
-      const startMonth = parseInt(start.slice(4, 6));
-      const endYear = parseInt(end.slice(0, 4));
-      const endMonth = parseInt(end.slice(4, 6));
-      let months = 0;
-      if (year > startYear && year < endYear) {
-        months = 12;
-      } else if (year === startYear && year === endYear) {
-        months = endMonth - startMonth + 1;
-      } else if (year === startYear) {
-        months = 12 - startMonth + 1;
-      } else if (year === endYear) {
-        months = endMonth;
-      }
-      totalIncome += months * amount;
-    });
+  // 인플레이션
+  const inflationInput = document.querySelector("input[placeholder='소비자물가상승률(%)']");
+  const inflation = parseFloat(inflationInput.dataset.raw || "0") / 100;
 
-    // 자산 복리 계산
-    let assetProfit = 0;
-    assetList.forEach(asset => {
-      asset.principal *= (1 + asset.rate);
-      assetProfit += asset.principal - (asset.principal / (1 + asset.rate));
-    });
-
-    // 미래 자산 반영
-    const maturity = futureMap.get(year) || 0;
-
-    // 잔액 계산
-    const annualExpense = Math.floor(currentExpense * 12);
-    balance = balance + totalIncome + assetProfit + maturity - annualExpense;
-
-    result.push({
-      year,
-      age,
-      avgMonthlyIncome: Math.floor(totalIncome / 12),
-      annualIncome: Math.floor(totalIncome),
-      monthlyExpense: Math.floor(currentExpense),
-      annualExpense: Math.floor(annualExpense),
-      yearEndBalance: Math.floor(balance),
-    });
-
-    if (balance < 0) break;
-    year++;
-    age++;
-    currentExpense *= (1 + inflationRate);
-  }
-
-  renderResult(result);
-}
-
-function renderResult(rows) {
-  const container = document.createElement("div");
-  container.className = "result-table";
-  container.innerHTML = `
+  const table = document.createElement("div");
+  table.className = "result-table";
+  table.innerHTML = `
     <table>
       <thead>
         <tr>
@@ -128,23 +67,80 @@ function renderResult(rows) {
           <th>당해 말 잔액</th>
         </tr>
       </thead>
-      <tbody>
-        ${rows.map(r => `
-          <tr>
-            <td>${r.year}</td>
-            <td>${r.age}</td>
-            <td>${r.avgMonthlyIncome.toLocaleString()}원</td>
-            <td>${r.annualIncome.toLocaleString()}원</td>
-            <td>${r.monthlyExpense.toLocaleString()}원</td>
-            <td>${r.annualExpense.toLocaleString()}원</td>
-            <td>${r.yearEndBalance.toLocaleString()}원</td>
-          </tr>`).join("")}
-      </tbody>
+      <tbody></tbody>
     </table>
   `;
+  document.body.appendChild(table);
+  const tbody = table.querySelector("tbody");
 
-  // 기존 테이블 제거 후 추가
-  const prev = document.querySelector(".result-table");
-  if (prev) prev.remove();
-  document.querySelector(".container").appendChild(container);
+  let balance = 0;
+  let year = startYear;
+  let age = startAge;
+  let livingCost = initialLivingCost;
+  const maxAge = 100;
+
+  while (age <= maxAge) {
+    // 연 수입 계산
+    let annualIncome = 0;
+    incomeList.forEach(inc => {
+      const start = parseInt(inc.start.slice(0, 6));
+      const end = parseInt(inc.end.slice(0, 6));
+      const current = parseInt(`${year}01`);
+      const currentEnd = parseInt(`${year}12`);
+      if (start <= currentEnd && end >= current) {
+        let months = 12;
+        if (year === parseInt(inc.start.slice(0, 4))) {
+          months -= parseInt(inc.start.slice(4, 6)) - 1;
+        }
+        if (year === parseInt(inc.end.slice(0, 4))) {
+          months = Math.min(months, parseInt(inc.end.slice(4, 6)));
+        }
+        annualIncome += inc.amount * months;
+      }
+    });
+
+    // 연 지출 계산
+    const annualExpense = Math.floor(livingCost * 12);
+
+    // 자산 복리 수익 적용
+    let assetGrowth = 0;
+    if (year === startYear) {
+      assetGrowth = assets.reduce((sum, a) => sum + a.amount, 0);
+    } else {
+      assetGrowth = assets.reduce((sum, a) => {
+        const rate = a.rate / 100;
+        return sum + a.amount * Math.pow(1 + rate, year - startYear);
+      }, 0);
+    }
+
+    // 미래 자산 합산
+    const maturedAssets = futureAssets
+      .filter(f => f.year === year)
+      .reduce((sum, f) => sum + f.amount, 0);
+
+    const totalBalance = Math.floor(assetGrowth + maturedAssets + balance + annualIncome - annualExpense);
+    if (totalBalance < 0) break;
+
+    const row = document.createElement("tr");
+    row.innerHTML = `
+      <td>${year}</td>
+      <td>${age}</td>
+      <td>${Math.floor(annualIncome / 12).toLocaleString()}</td>
+      <td>${annualIncome.toLocaleString()}</td>
+      <td>${Math.floor(livingCost).toLocaleString()}</td>
+      <td>${annualExpense.toLocaleString()}</td>
+      <td>${totalBalance.toLocaleString()}</td>
+    `;
+    tbody.appendChild(row);
+
+    balance = totalBalance;
+    year += 1;
+    age += 1;
+    livingCost *= (1 + inflation);
+  }
+});
+
+function parseRaw(input) {
+  const raw = input.dataset.raw;
+  return raw ? parseFloat(raw.replace(/,/g, "")) : 0;
 }
