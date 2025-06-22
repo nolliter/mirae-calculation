@@ -87,7 +87,7 @@ saveBtn.onclick = () => {
     scrollY: -window.scrollY,
     windowWidth: captureArea.scrollWidth,   // 캡처 영역의 실제 너비
     windowHeight: captureArea.scrollHeight,  // 캡처 영역의 실제 높이
-    backgroundColor: window.getComputedStyle(captureArea).backgroundColor, // 현재 배경색 유지
+    backgroundColor: "#ffffff", // 하얀색 배경 설정
     scale: 2 // 해상도 2배로 렌더링
   }).then(canvas => {
   const link = document.createElement("a");
@@ -134,8 +134,7 @@ resultContainer.appendChild(saveBtn);
     balance += annualIncome + maturedAssets - annualExpense;
 
     // 자산 수익률은 balance 중 자산+미래자산으로 구성된 원금에만 적용
-    const base = Math.max(balance, 0); // 복리 계산에서 음수 피하기
-    if (year > startYear) {
+    if (year > startYear && balance > 0) {
       const totalInitial = assets.reduce((sum, a) => sum + a.amount, 0);
       const totalRate = assets.length > 0
         ? assets.reduce((sum, a) => sum + a.amount * (a.rate / 100), 0) / totalInitial
