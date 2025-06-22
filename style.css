@@ -54,7 +54,7 @@ h1 {
 .select-wrapper {
   width: 100%;
 }
-/* .input-row input {
+.input-row input {
   overflow: visible;
   padding: 10px;
   font-size: 14px;
@@ -62,13 +62,7 @@ h1 {
   border: none;
   background-color: #f0f0f0;
   box-sizing: border-box;
-} */
-.input-row input {
-  line-height: 1.5;
-  padding-top: 10px;
-  padding-bottom: 10px;
   height: auto; /* 고정 높이 피하기 */
-  box-sizing: border-box;
   vertical-align: middle;
 }
 .input-row button.delete-btn {
