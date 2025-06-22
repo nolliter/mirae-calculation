@@ -1,11 +1,10 @@
 document.querySelector(".calculate-btn").addEventListener("click", () => {
-  const resultContainer = document.querySelector(".result-table");
-  if (resultContainer) resultContainer.remove();
+  const resultContainer = document.getElementById("result-container");
+  resultContainer.innerHTML = "";
 
   const startYear = parseInt(document.querySelector("input[placeholder='연도']").value);
   const startAge = parseInt(document.querySelector("input[placeholder='나이']").value);
 
-  // 현재 자산 수집
   const assetInputs = document.querySelectorAll(".section[data-section='assets'] .input-row");
   const assets = [];
   assetInputs.forEach(row => {
@@ -16,7 +15,6 @@ document.querySelector(".calculate-btn").addEventListener("click", () => {
     assets.push({ amount, rate });
   });
 
-  // 미래 자산 수집
   const futureInputs = document.querySelectorAll(".section[data-section='future-assets'] .input-row");
   const futureAssets = [];
   futureInputs.forEach(row => {
@@ -30,7 +28,6 @@ document.querySelector(".calculate-btn").addEventListener("click", () => {
     }
   });
 
-  // 정기 수입 수집
   const incomeInputs = document.querySelectorAll(".section[data-section='income'] .input-row");
   const incomeList = [];
   incomeInputs.forEach(row => {
@@ -44,11 +41,9 @@ document.querySelector(".calculate-btn").addEventListener("click", () => {
     }
   });
 
-  // 희망 월 생활비
   const livingCostInput = document.querySelector("input[placeholder='월 생활비(원)']");
   const initialLivingCost = parseRaw(livingCostInput);
 
-  // 인플레이션
   const inflationInput = document.querySelector("input[placeholder='소비자물가상승률(%)']");
   const inflation = parseFloat(inflationInput.dataset.raw || "0") / 100;
 
@@ -70,21 +65,22 @@ document.querySelector(".calculate-btn").addEventListener("click", () => {
       <tbody></tbody>
     </table>
   `;
-
-  const container = document.getElementById("result-container");
-  container.innerHTML = "";
-  container.appendChild(table);
-  
+  resultContainer.appendChild(table);
   const tbody = table.querySelector("tbody");
 
-  let balance = 0;
+  const initialAssetTotal = assets.reduce((sum, a) => sum + a.amount, 0);
+  let balance = initialAssetTotal;
+  let livingCost = initialLivingCost;
   let year = startYear;
   let age = startAge;
-  let livingCost = initialLivingCost;
   const maxAge = 100;
 
+  let totalRate = 0;
+  if (assets.length > 0) {
+    totalRate = assets.reduce((sum, a) => sum + a.amount * (a.rate / 100), 0) / initialAssetTotal;
+  }
+
   while (age <= maxAge) {
-    // 연 수입 계산
     let annualIncome = 0;
     incomeList.forEach(inc => {
       const start = parseInt(inc.start.slice(0, 6));
@@ -103,27 +99,18 @@ document.querySelector(".calculate-btn").addEventListener("click", () => {
       }
     });
 
-    // 연 지출 계산
     const annualExpense = Math.floor(livingCost * 12);
 
-    // 자산 복리 수익 적용
-    let assetGrowth = 0;
-    if (year === startYear) {
-      assetGrowth = assets.reduce((sum, a) => sum + a.amount, 0);
-    } else {
-      assetGrowth = assets.reduce((sum, a) => {
-        const rate = a.rate / 100;
-        return sum + a.amount * Math.pow(1 + rate, year - startYear);
-      }, 0);
-    }
-
-    // 미래 자산 합산
     const maturedAssets = futureAssets
       .filter(f => f.year === year)
       .reduce((sum, f) => sum + f.amount, 0);
 
-    const totalBalance = Math.floor(assetGrowth + maturedAssets + balance + annualIncome - annualExpense);
-    if (totalBalance < 0) break;
+    balance = balance + annualIncome + maturedAssets - annualExpense;
+    if (year > startYear && totalRate > 0) {
+      balance = Math.floor(balance * (1 + totalRate));
+    }
+
+    if (balance < 0) break;
 
     const row = document.createElement("tr");
     row.innerHTML = `
@@ -133,14 +120,13 @@ document.querySelector(".calculate-btn").addEventListener("click", () => {
       <td>${annualIncome.toLocaleString()}</td>
       <td>${Math.floor(livingCost).toLocaleString()}</td>
       <td>${annualExpense.toLocaleString()}</td>
-      <td>${totalBalance.toLocaleString()}</td>
+      <td>${balance.toLocaleString()}</td>
     `;
     tbody.appendChild(row);
 
-    balance = totalBalance;
-    year += 1;
-    age += 1;
-    livingCost *= (1 + inflation);
+    year++;
+    age++;
+    livingCost *= 1 + inflation;
   }
 });
 
