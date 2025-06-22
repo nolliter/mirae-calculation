@@ -63,7 +63,7 @@ h1 {
   background-color: #f0f0f0;
   box-sizing: border-box;
   /* 이미지 저장 시 잘림 방지 */
-  line-height: 1.4;
+  line-height: 1.5;
   height: auto; /* 고정 높이 피하기 */
   vertical-align: middle;
   
