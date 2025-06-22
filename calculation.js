@@ -67,7 +67,6 @@ document.querySelector(".calculate-btn").addEventListener("click", () => {
   `;
   resultContainer.appendChild(table);
 
-
 // 저장하기 버튼 생성
 const saveBtn = document.createElement("button");
 saveBtn.textContent = "저장하기";
@@ -90,3 +89,73 @@ saveBtn.onclick = () => {
   });
 };
 resultContainer.appendChild(saveBtn);
+
+  const tbody = table.querySelector("tbody");
+
+  let year = startYear;
+  let age = startAge;
+  const maxAge = 100;
+  let balance = assets.reduce((sum, a) => sum + a.amount, 0);
+  let livingCost = initialLivingCost;
+
+  while (age <= maxAge) {
+    let annualIncome = 0;
+    incomeList.forEach(inc => {
+      const start = parseInt(inc.start.slice(0, 6));
+      const end = parseInt(inc.end.slice(0, 6));
+      const current = parseInt(`${year}01`);
+      const currentEnd = parseInt(`${year}12`);
+      if (start <= currentEnd && end >= current) {
+        let months = 12;
+        if (year === parseInt(inc.start.slice(0, 4))) {
+          months -= parseInt(inc.start.slice(4, 6)) - 1;
+        }
+        if (year === parseInt(inc.end.slice(0, 4))) {
+          months = Math.min(months, parseInt(inc.end.slice(4, 6)));
+        }
+        annualIncome += inc.amount * months;
+      }
+    });
+
+    const maturedAssets = futureAssets
+      .filter(f => f.year === year)
+      .reduce((sum, f) => sum + f.amount, 0);
+
+    const annualExpense = Math.floor(livingCost * 12);
+
+    balance += annualIncome + maturedAssets - annualExpense;
+
+    // 자산 수익률은 balance 중 자산+미래자산으로 구성된 원금에만 적용
+    const base = Math.max(balance, 0); // 복리 계산에서 음수 피하기
+    if (year > startYear) {
+      const totalInitial = assets.reduce((sum, a) => sum + a.amount, 0);
+      const totalRate = assets.length > 0
+        ? assets.reduce((sum, a) => sum + a.amount * (a.rate / 100), 0) / totalInitial
+        : 0;
+      balance = Math.floor(base * (1 + totalRate));
+    }
+
+    if (balance <= 0) break;
+
+    const row = document.createElement("tr");
+    row.innerHTML = `
+      <td>${year}</td>
+      <td>${age}</td>
+      <td>${Math.floor(annualIncome / 12).toLocaleString()}</td>
+      <td>${annualIncome.toLocaleString()}</td>
+      <td>${Math.floor(livingCost).toLocaleString()}</td>
+      <td>${annualExpense.toLocaleString()}</td>
+      <td>${balance.toLocaleString()}</td>
+    `;
+    tbody.appendChild(row);
+
+    year++;
+    age++;
+    livingCost *= 1 + inflation;
+  }
+});
+
+function parseRaw(input) {
+  const raw = input.dataset.raw;
+  return raw ? parseFloat(raw.replace(/,/g, "")) : 0;
+}
