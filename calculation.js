@@ -68,17 +68,11 @@ document.querySelector(".calculate-btn").addEventListener("click", () => {
   resultContainer.appendChild(table);
   const tbody = table.querySelector("tbody");
 
-  const initialAssetTotal = assets.reduce((sum, a) => sum + a.amount, 0);
-  let balance = initialAssetTotal;
-  let livingCost = initialLivingCost;
   let year = startYear;
   let age = startAge;
   const maxAge = 100;
-
-  let totalRate = 0;
-  if (assets.length > 0) {
-    totalRate = assets.reduce((sum, a) => sum + a.amount * (a.rate / 100), 0) / initialAssetTotal;
-  }
+  let balance = assets.reduce((sum, a) => sum + a.amount, 0);
+  let livingCost = initialLivingCost;
 
   while (age <= maxAge) {
     let annualIncome = 0;
@@ -99,15 +93,22 @@ document.querySelector(".calculate-btn").addEventListener("click", () => {
       }
     });
 
-    const annualExpense = Math.floor(livingCost * 12);
-
     const maturedAssets = futureAssets
       .filter(f => f.year === year)
       .reduce((sum, f) => sum + f.amount, 0);
 
-    balance = balance + annualIncome + maturedAssets - annualExpense;
-    if (year > startYear && totalRate > 0) {
-      balance = Math.floor(balance * (1 + totalRate));
+    const annualExpense = Math.floor(livingCost * 12);
+
+    balance += annualIncome + maturedAssets - annualExpense;
+
+    // 자산 수익률은 balance 중 자산+미래자산으로 구성된 원금에만 적용
+    const base = Math.max(balance, 0); // 복리 계산에서 음수 피하기
+    if (year > startYear) {
+      const totalInitial = assets.reduce((sum, a) => sum + a.amount, 0);
+      const totalRate = assets.length > 0
+        ? assets.reduce((sum, a) => sum + a.amount * (a.rate / 100), 0) / totalInitial
+        : 0;
+      balance = Math.floor(base * (1 + totalRate));
     }
 
     if (balance < 0) break;
