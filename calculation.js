@@ -63,6 +63,11 @@ document.querySelector(".calculate-btn").addEventListener("click", () => {
         </tr>
       </thead>
       <tbody></tbody>
+      <style>
+        .deficit {
+          background-color: #ffe5e5 !important;
+        }
+      </style>
     </table>
   `;
   resultContainer.appendChild(table);
@@ -82,6 +87,7 @@ saveBtn.onclick = () => {
     scrollY: -window.scrollY,
     windowWidth: captureArea.scrollWidth,   // 캡처 영역의 실제 너비
     windowHeight: captureArea.scrollHeight  // 캡처 영역의 실제 높이
+    backgroundColor: window.getComputedStyle(captureArea).backgroundColor // 현재 배경색 유지
   }).then(canvas => {
   const link = document.createElement("a");
   link.download = "result.png";
@@ -136,7 +142,21 @@ resultContainer.appendChild(saveBtn);
       balance = Math.floor(base * (1 + totalRate));
     }
 
-    if (balance <= 0) break;
+    if (balance <= 0) {
+      const row = document.createElement("tr");
+      row.className = "deficit";
+      row.innerHTML = `
+        <td>${year}</td>
+        <td>${age}</td>
+        <td>${Math.floor(annualIncome / 12).toLocaleString()}</td>
+        <td>${annualIncome.toLocaleString()}</td>
+        <td>${Math.floor(livingCost).toLocaleString()}</td>
+        <td>${annualExpense.toLocaleString()}</td>
+        <td>${balance.toLocaleString()}</td>
+      `;
+      tbody.appendChild(row);
+      break;
+    }
 
     const row = document.createElement("tr");
     row.innerHTML = `
