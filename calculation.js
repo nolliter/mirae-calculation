@@ -55,11 +55,11 @@ document.querySelector(".calculate-btn").addEventListener("click", () => {
         <tr>
           <th>연도</th>
           <th>나이</th>
-          <th title="당해 총 수입/12">월 평균 수입</th>
+          <th title="당해 총 수입/12">월 평균수입</th>
           <th>연 수입</th>
           <th title="물가 상승 고려">월 지출</th>
           <th>연 지출</th>
-          <th>당해 말 잔액</th>
+          <th>연말 잔액</th>
         </tr>
       </thead>
       <tbody></tbody>
