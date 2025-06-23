@@ -92,6 +92,7 @@ h1 {
   border: none;
   border-radius: 10px;
   cursor: pointer;
+  margin: 20px 0;
 }
 .divider {
   width: 100%;
