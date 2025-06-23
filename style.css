@@ -11,8 +11,7 @@ body {
 }
 .container {
   text-align: center;
-  padding: 20px;
-  
+  padding: 16px;
   width: 100%;
   max-width: 600px;
   margin: 0 auto;
@@ -23,7 +22,6 @@ body {
   max-width: 600px; /* 데스크탑 기준 최대 폭 */
   margin: 0 auto;
   text-align: center;
-  padding: 0 16px; /* 좌우 여백 확보 */
 }
 h1 {
   font-size: 28px;
@@ -64,7 +62,7 @@ h1 {
 }
 .input-row input {
   overflow: visible;
-  padding: 10px;
+  padding: 5px;
   font-size: 14px;
   border-radius: 10px;
   border: none;
@@ -104,12 +102,12 @@ h1 {
 .section.fixed-row-1 .input-row,
 .section.fixed-row-2 .input-row {
   /*width: 480px;
-  margin: 0 auto;
+  margin: 0 auto;*/
   display: grid;
-  gap: 10px;*/
+  gap: 10px;
   width: 100%;
   max-width: 480px;
-  padding: 0 16px;
+  /*padding: 0 16px;*/
   box-sizing: border-box;
   margin: 0 auto;
 }
@@ -165,6 +163,7 @@ h1 {
   border-bottom: 1px solid #dcdcdc;
   padding-bottom: 2px;
   transition: border-color 0.2s ease, color 0.2s ease;
+  margin-bottom: 20px;
 }
 .custom-link:hover {
   border-color: #000;
