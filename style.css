@@ -3,7 +3,8 @@ body {
   padding: 0;
   font-family: 'Noto Sans KR', sans-serif;
   background-color: #fff;
-  display: flex;
+  /* display: flex; */
+  display: block;
   justify-content: center;
   align-items: center;
   min-height: 100vh;
@@ -11,6 +12,11 @@ body {
 .container {
   text-align: center;
   padding: 20px;
+  
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+  box-sizing: border-box;
 }
 .section {
   width: 100%;
@@ -97,10 +103,15 @@ h1 {
 }
 .section.fixed-row-1 .input-row,
 .section.fixed-row-2 .input-row {
-  width: 480px;
+  /*width: 480px;
   margin: 0 auto;
   display: grid;
-  gap: 10px;
+  gap: 10px;*/
+  width: 100%;
+  max-width: 480px;
+  padding: 0 16px;
+  box-sizing: border-box;
+  margin: 0 auto;
 }
 .section.fixed-row-1 .input-row {
   grid-template-columns: 1fr;
