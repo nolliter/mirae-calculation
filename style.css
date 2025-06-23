@@ -62,7 +62,7 @@ h1 {
 }
 .input-row input {
   overflow: visible;
-  padding: 5px;
+  padding: 10px;
   font-size: 14px;
   border-radius: 10px;
   border: none;
