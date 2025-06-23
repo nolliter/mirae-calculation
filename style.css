@@ -94,7 +94,8 @@ h1 {
   cursor: pointer;
 }
 .divider {
-  width: 480px;
+  width: 100%;
+  max-width: 480px;
   height: 1px;
   margin: 40px auto;
   background-color: #e0e0e0;
