@@ -197,3 +197,6 @@ function applyResponsiveScale() {
     }
   }
 }
+
+window.addEventListener("load", applyResponsiveScale);
+window.addEventListener("resize", applyResponsiveScale);
