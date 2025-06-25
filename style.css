@@ -18,14 +18,7 @@ body {
   margin: 0 auto;
   box-sizing: border-box;
 }
-.container {
-  text-align: center;
-  padding: 16px;
-  width: 100%;
-  max-width: 600px;
-  margin: 0 auto;
-  box-sizing: border-box;
-}
+
 .section {
   width: 100%;
   max-width: 600px; /* 데스크탑 기준 최대 폭 */
