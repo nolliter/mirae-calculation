@@ -177,3 +177,23 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 });
+
+function applyResponsiveScale() {
+  const vw = window.innerWidth;
+  const baseWidth = 600;
+  const container = document.querySelector(".container");
+
+  if (container) {
+    if (vw < baseWidth) {
+      const scale = vw / baseWidth;
+      container.style.transform = `scale(${scale})`;
+      container.style.transformOrigin = "top left";
+      container.style.width = baseWidth + "px";
+    } else {
+      // 💡 데스크탑 등 너비 충분할 경우 원래대로
+      container.style.transform = "";
+      container.style.transformOrigin = "";
+      container.style.width = "";
+    }
+  }
+}
